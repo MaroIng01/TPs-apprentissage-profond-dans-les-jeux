@@ -214,12 +214,10 @@ import numpy as np
 
 env = gym.make("FrozenLake-v1", is_slippery=True)
 
-# Initialisation de la Q-table
 n_actions = env.action_space.n
 n_states = env.observation_space.n
 Q = np.zeros((n_states, n_actions))
 
-# Affichage de la Q-table avant l'apprentissage
 print("Q-table avant apprentissage :")
 print(Q)
 
