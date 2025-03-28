@@ -25,10 +25,8 @@ pip install --upgrade gymnasium pygame numpy
 ```python
 import gymnasium as gym
 
-# Création de l'environnement CartPole-v1
 env = gym.make("CartPole-v1", render_mode="human")
 
-# Réinitialisation de l'environnement
 env.reset()
 ```
 
@@ -45,20 +43,19 @@ env.reset()
 3. Observer les valeurs des observations retournées.
 
 ```python
-import gymnasium as gym
 
-env = gym.make("CartPole-v1", render_mode="human")
-print(f"Espace d'actions: {env.action_space}")
-print(f"Espace d'observations: {env.observation_space}")
+print(f"Espace d'actions : {env.action_space}")
+print(f"Espace d'observation : {env.observation_space}")
 
 for _ in range(100):
     action = env.action_space.sample()
     observation, reward, done, _, _ = env.step(action)
-    print(f"Action: {action}, Observation: {observation}, Reward: {reward}")
-    if done:
+    print(f"Action : {action}, Observation : {observation}, Reward : {reward}")
+    if done :
         env.reset()
 
-env.close()
+env.close
+
 ```
 
 ---
@@ -97,6 +94,7 @@ for step in range(num_steps):
         observation, _ = env.reset()  
 
 env.close()  
+
 ```
 
 ---
@@ -114,23 +112,36 @@ env.close()
 import gymnasium as gym
 
 env = gym.make("CartPole-v1", render_mode="human")
-observation, _ = env.reset()
+observation, _ = env.reset(seed=42)
+
 done = False
 step_count = 0
 
+print("Contrôle manuel : entrez 0 (gauche) ou 1 (droite) pour déplacer le chariot.")
+
 while not done:
+    env.render()
+
     action = input("Entrez votre action (0=gauche, 1=droite) : ")
+    
     if action not in ["0", "1"]:
         print("Action invalide ! Entrez 0 ou 1.")
         continue
     
     action = int(action)
+
     observation, reward, done, _, _ = env.step(action)
+    
+    print(f"\nÉtape {step_count + 1}:")
+    print(f"Action : {action}, Observation : {observation}, Reward : {reward}")
+    print(f"  Terminé ? {done}")
+    print("-" * 40)
+
     step_count += 1
-    print(f"Étape {step_count} - Observation: {observation}, Récompense: {reward}, Terminé: {done}")
+
+print(f"\nL'épisode est terminé après {step_count} étapes.")
 
 env.close()
-print(f"L'épisode s'est terminé après {step_count} étapes.")
 ```
 
 ---
@@ -148,22 +159,32 @@ import gymnasium as gym
 import numpy as np
 
 env = gym.make("CartPole-v1", render_mode="human")
-num_episodes = 10
 
-durations = []
+num_episodes = 10
+episode_durations = []
+
 for episode in range(num_episodes):
-    observation, _ = env.reset()
+    observation, _ = env.reset()  
     done = False
-    step_count = 0
+    step_count = 0  
+
     while not done:
-        action = env.action_space.sample()
+        action = env.action_space.sample() 
         observation, reward, done, _, _ = env.step(action)
-        step_count += 1
-    durations.append(step_count)
+        step_count += 1 
+
+    episode_durations.append(step_count)  
     print(f"Épisode {episode + 1} terminé en {step_count} étapes.")
 
-print(f"Durée moyenne des épisodes : {np.mean(durations):.2f} étapes")
-env.close()
+
+average_duration = np.mean(episode_durations)
+std_duration = np.std(episode_durations) 
+print("\nRésumé des performances de la politique aléatoire :")
+print(f"  - Nombre d'épisodes : {num_episodes}")
+print(f"  - Durée moyenne : {average_duration:.2f} étapes")
+print(f"  - Écart-type : {std_duration:.2f}")
+
+env.close() 
 ```
 ---
 # TP2 :
@@ -181,14 +202,11 @@ env.close()
 import gymnasium as gym
 import numpy as np
 
-# Charger l'environnement FrozenLake
 env = gym.make("FrozenLake-v1", is_slippery=True)
 
-# Affichage de l'espace d'états et d'actions
 print(f"Espace d'actions: {env.action_space}")
 print(f"Espace d'observations: {env.observation_space}")
 
-# Exécution de la boucle avec des actions aléatoires
 for _ in range(100):
     action = env.action_space.sample()
     observation, reward, done, _, _ = env.step(action)
