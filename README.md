@@ -1,5 +1,6 @@
 # TPs-apprentissage-profond-dans-les-jeux
 
+# TP1 :
 
 ## Objectif
 L'objectif de ce TP est de se familiariser avec les outils essentiels du Reinforcement Learning (RL), notamment OpenAI Gym. Les étudiants vont explorer comment interagir avec un environnement RL et exécuter des actions avant d'implémenter un algorithme d'apprentissage dans les séances suivantes.
@@ -164,11 +165,150 @@ for episode in range(num_episodes):
 print(f"Durée moyenne des épisodes : {np.mean(durations):.2f} étapes")
 env.close()
 ```
-
 ---
+# TP2 :
 
-## Conclusion
-Ce TP permet une première immersion dans le Reinforcement Learning avec OpenAI Gym. Les exercices montrent comment interagir avec un environnement RL et comprendre les concepts clés (observations, actions, récompenses). Dans les prochaines sessions, nous implémenterons des algorithmes d’apprentissage comme **Q-Learning** et **Deep Q-Networks (DQN)** pour améliorer la performance de l'agent. 🚀
+### Exercice 1: Exploration de l'Environnement Frozen Lake
+**Objectif** : Apprendre à interagir avec un environnement Gym, explorer les actions possibles et comprendre les observations et récompenses retournées par l'environnement.
+
+✔ **Instructions** :
+
+1. Charger l'environnement FrozenLake-v1 de OpenAI Gym.
+2. Afficher les informations de l'espace d'états et d'actions.
+3. Exécuter une boucle où l'agent prend des actions aléatoires pendant plusieurs épisodes.
+4. Observer les observations et les récompenses obtenues.
+```python
+import gymnasium as gym
+import numpy as np
+
+# Charger l'environnement FrozenLake
+env = gym.make("FrozenLake-v1", is_slippery=True)
+
+# Affichage de l'espace d'états et d'actions
+print(f"Espace d'actions: {env.action_space}")
+print(f"Espace d'observations: {env.observation_space}")
+
+# Exécution de la boucle avec des actions aléatoires
+for _ in range(100):
+    action = env.action_space.sample()
+    observation, reward, done, _, _ = env.step(action)
+    print(f"Action: {action}, Observation: {observation}, Récompense: {reward}")
+    if done:
+        env.reset()
+
+env.close()
+```
+
+### Exercice 2: Implémentation de la Q-Table et Initialisation
+**Objectif** : Créer une Q-Table et la remplir d'initialisations avant d'apprendre.
+
+✔ **Instructions** :
+
+1. Créer une Q-Table de dimension (nombre d'états x nombre d'actions), initialisée à 0.
+2. Afficher la Q-Table avant l'apprentissage.
+3. Vérifier que chaque état a une liste de valeurs associées aux actions possibles.
+   
+```python
+import gymnasium as gym
+import numpy as np
+
+env = gym.make("FrozenLake-v1", is_slippery=True)
+
+# Initialisation de la Q-table
+n_actions = env.action_space.n
+n_states = env.observation_space.n
+Q = np.zeros((n_states, n_actions))
+
+# Affichage de la Q-table avant l'apprentissage
+print("Q-table avant apprentissage :")
+print(Q)
+
+```
+### Exercice 3: Implémentation du Q-Learning avec Mise à Jour
+**Objectif** : Implémenter l'algorithme Q-learning et mettre à jour la Q-table à chaque épisode.
+
+✔ **Instructions** :
+
+1. Définir les hyperparamètres : taux d'apprentissage (alpha), facteur de discount (gamma), epsilon pour l'exploration.
+2. Mettre à jour la Q-table en appliquant la règle de mise à jour du Q-learning :
+   Q(s,a)←Q(s,a)+α[R(s,a)+γ 
+a 
+′
+ 
+max
+​
+ Q(s 
+′
+ ,a 
+′
+ )−Q(s,a)]
+3. Exécuter plusieurs épisodes et observer l'évolution de la table.
+```python
+import gymnasium as gym
+import numpy as np
+
+alpha = 0.1
+gamma = 0.99
+epsilon = 1.0
+epsilon_decay = 0.995
+num_episodes = 5000
+
+env = gym.make("FrozenLake-v1", is_slippery=True)
+
+n_actions = env.action_space.n
+n_states = env.observation_space.n
+Q = np.zeros((n_states, n_actions))
+
+for episode in range(num_episodes):
+    state, _ = env.reset()
+    done = False
+    while not done:
+        if np.random.rand() < epsilon:
+            action = env.action_space.sample()  
+        else:
+            action = np.argmax(Q[state])  
+        
+        next_state, reward, done, _, _ = env
+
+```
+### Exercice 4: Évaluation du Q-Learning
+**Objectif** : Tester la politique apprise en utilisant la Q-table après l'entraînement et mesurer la performance de l'agent.
+
+✔ **Instructions** :
+
+1. Lancer plusieurs épisodes en exploitant la politique apprise (choisir toujours l'action ayant la plus haute valeur Q).
+2. Mesurer le taux de succès de l'agent sur N épisodes (ex. 1000 épisodes).
+3. Afficher les résultats pour évaluer si l'agent a bien appris.
+   
+```python
+import gymnasium as gym
+import numpy as np
+
+num_eval_episodes = 1000
+success_count = 0
+
+env = gym.make("FrozenLake-v1", is_slippery=True)
+
+for episode in range(num_eval_episodes):
+    state, _ = env.reset()
+    done = False
+
+    while not done:
+        action = np.argmax(Q[state])
+        
+        next_state, reward, done, _, _ = env.step(action)
+
+        state = next_state
+
+    if reward == 1.0:
+        success_count += 1
+
+success_rate = success_count / num_eval_episodes * 100
+print(f"Taux de succès après entraînement : {success_rate:.2f}%")
+
+
+```
+
 
 ---
 
